@@ -78,18 +78,39 @@ cp .env.example .env
 
 ## Configuration
 
-Edit `.env` file:
+### Understanding the Architecture
+
+This implementation uses:
+- **AIQ Toolkit** - NVIDIA's agent orchestration framework (runs locally, no API key needed)
+- **LLM Provider** - The actual AI model service (requires API key)
+
+### LLM Provider Setup
+
+You need to choose an LLM provider and configure its API key:
+
+#### Option 1: OpenAI (Recommended for getting started)
 
 ```env
-# Choose provider: openai or nvidia
 LLM_PROVIDER=openai
 LLM_MODEL=gpt-4
-OPENAI_API_KEY=your-key-here
-
-# Or use NVIDIA NIM
-# LLM_PROVIDER=nvidia
-# NVIDIA_API_KEY=your-key-here
+OPENAI_API_KEY=sk-proj-your-key-here
+OPENAI_BASE_URL=  # Leave empty for standard OpenAI API
 ```
+
+Get your OpenAI API key from: https://platform.openai.com/api-keys
+
+#### Option 2: NVIDIA NIM (NVIDIA's LLM Service)
+
+```env
+LLM_PROVIDER=nvidia
+LLM_MODEL=meta/llama-3.1-8b-instruct  # or other NVIDIA models
+NVIDIA_API_KEY=nvapi-your-key-here
+NVIDIA_BASE_URL=https://integrate.api.nvidia.com/v1
+```
+
+Get your NVIDIA API key from: https://build.nvidia.com/
+
+**Note**: The AIQ Toolkit itself doesn't require an API key - it's a local orchestration framework. You only need API keys for the LLM providers (OpenAI or NVIDIA NIM) that actually run the AI models.
 
 ## Usage
 
@@ -195,14 +216,22 @@ You can use this as a building block in larger AIQ multi-agent systems.
 ## Dependencies
 
 Key dependencies installed:
-- **aiqtoolkit[langchain]** - NVIDIA NeMo Agent Toolkit with LangChain support
+- **aiqtoolkit** - NVIDIA NeMo Agent Toolkit (local orchestration, no API key needed)
 - **langchain** - LangChain framework
-- **langchain-openai** - OpenAI integration
-- **langchain-nvidia-ai-endpoints** - NVIDIA NIM integration
+- **langchain-openai** - OpenAI LLM integration (requires OpenAI API key)
+- **langchain-nvidia-ai-endpoints** - NVIDIA NIM LLM integration (requires NVIDIA API key)
 - **fastapi** - Web framework
 - **uvicorn** - ASGI server
 
 See `pyproject.toml` for full dependency list.
+
+### What Needs API Keys?
+
+- ❌ **AIQ Toolkit** - No API key needed (runs locally)
+- ❌ **LangChain** - No API key needed (framework only)
+- ❌ **FastAPI/Uvicorn** - No API key needed (web server)
+- ✅ **OpenAI** - Requires API key if using `LLM_PROVIDER=openai`
+- ✅ **NVIDIA NIM** - Requires API key if using `LLM_PROVIDER=nvidia`
 
 ## Testing
 
